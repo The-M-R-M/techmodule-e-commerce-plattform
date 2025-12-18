@@ -1,23 +1,4 @@
-# Test Concept and Test Procedures – Techmodule E‑Commerce Platform
-
-This document explains how the Techmodule E‑Commerce Platform is tested to ensure functionality and quality.  
-It combines the practical testing instructions (how to run tests) with a wider **test concept** covering:
-
-- Test object, user stories, architecture and criticality of different parts
-- Test strategy, types of tests and the environments used
-- Release and repository management and code‑quality practices
-- Concrete test cases, including **blackbox tests** and example **test logs**
-
-The focus is on **local developer workflow on Windows** and alignment with our repository and branch conventions.
-
-**Technology overview**
-
-- **Backend:** Spring Boot 3 (Java 25), JUnit 5, Spring Test, Mockito
-- **Frontend:** Angular 20, Jasmine/Karma unit tests
-- **E2E:** Playwright (planned/basic scaffold)
-- **Orchestration:** Docker Compose for local dev (not needed for unit tests)
-
----
+# Test Concept – Techmodule E‑Commerce Platform
 
 ## 1. Test Object
 
