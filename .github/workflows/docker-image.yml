@@ -45,9 +45,10 @@ jobs:
         working-directory: e-commerce-frontend
         run: npm run lint --if-present
 
-      - name: Frontend - unit tests (if available)
+      - name: Frontend - unit tests (headless)
         working-directory: e-commerce-frontend
-        run: npm test --if-present
+        run: npm test -- --watch=false --browsers=ChromeHeadless
+
 
       # ---------- Compose validation + startup ----------
       - name: Create .env for compose
