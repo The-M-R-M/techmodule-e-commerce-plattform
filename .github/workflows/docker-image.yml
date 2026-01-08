@@ -1,0 +1,41 @@
+name: Docker Compose Startup
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env
+        run: |
+          cat > .env << 'EOF'
+          POSTGRES_DB=shop
+          POSTGRES_USER=shop
+          POSTGRES_PASSWORD=shop
+          JWT_SECRET=dummy
+          STRIPE_SECRET_KEY=dummy
+          STRIPE_WEBHOOK_SECRET=dummy
+          GOOGLE_CLIENT_ID=dummy
+          GOOGLE_CLIENT_SECRET=dummy
+          EOF
+
+      - name: Start stack
+        run: docker compose up -d --build
+
+      - name: Show containers
+        run: docker compose ps
+
+      - name: Smoke test
+        run: |
+          curl -fsS http://localhost:4200 >/dev/null
+          curl -fsS http://localhost:8080/api/health >/dev/null
+
+      - name: Shutdown
+        if: always()
+        run: docker compose down -v
