@@ -2,7 +2,6 @@ name: Publish Docker Images to GHCR
 
 on:
   push:
-    branches: ["main"]
     tags:
       - "v*.*.*"
 
@@ -24,10 +23,10 @@ jobs:
         id: semver
         shell: bash
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"   # 1.2.3
-          MAJOR="${VERSION%%.*}"           # 1
-          REST="${VERSION#*.}"             # 2.3
-          MINOR="${REST%%.*}"              # 2
+          VERSION="${GITHUB_REF_NAME#v}"
+          MAJOR="${VERSION%%.*}"
+          REST="${VERSION#*.}"
+          MINOR="${REST%%.*}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "major=$MAJOR" >> $GITHUB_OUTPUT
           echo "minor=$MINOR" >> $GITHUB_OUTPUT
