@@ -1,0 +1,3 @@
+# Deprecated file: Do not use this compose.yaml
+# The authoritative Docker Compose setup is at the repository root: ../compose.yml
+# This file remains only to avoid confusion if opened in IDE. It does not define any services.
