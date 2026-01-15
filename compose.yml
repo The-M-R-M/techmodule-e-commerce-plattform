@@ -48,26 +48,26 @@ services:
       timeout: 5s
       retries: 40
 
-  #web:
-   # build:
-    #  context: ./e-commerce-frontend
-      #dockerfile: Dockerfile
-      #target: dev
-   # container_name: shop-web
-   # restart: unless-stopped
-   # environment:
-   #   - API_BASE_URL=http://api:8080
-    #  - NODE_OPTIONS=--max_old_space_size=2048
-   # ports:
-   #   - "4200:4200"
-   # depends_on:
-   #   api:
-    #    condition: service_healthy
-   # healthcheck:
-    #  test: ["CMD-SHELL", "wget -qO- http://localhost:4200 || curl -fsS http://localhost:4200"]
-     # interval: 5s
-      #timeout: 5s
-      #retries: 40
+  web:
+    build:
+      context: ./e-commerce-frontend
+      dockerfile: Dockerfile
+      target: dev
+    container_name: shop-web
+    restart: unless-stopped
+    environment:
+      - API_BASE_URL=http://api:8080
+      - NODE_OPTIONS=--max_old_space_size=2048
+    ports:
+      - "4200:4200"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:4200 || curl -fsS http://localhost:4200"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
 
 volumes:
   postgres-data:
