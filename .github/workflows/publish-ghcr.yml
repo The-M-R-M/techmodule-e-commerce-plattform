@@ -3,6 +3,8 @@ name: Publish Docker Images to GHCR
 on:
   push:
     branches: ["main"]
+    tags:
+      - "v*.*.*"
 
 permissions:
   contents: read
@@ -11,7 +13,6 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -28,6 +29,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # ---- Calculate semver tags if this is a vX.Y.Z tag ----
+      - name: Compute semver tags
+        id: semver
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"   # 1.2.3
+          MAJOR="${VERSION%%.*}"           # 1
+          REST="${VERSION#*.}"             # 2.3
+          MINOR="${REST%%.*}"              # 2
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "major=$MAJOR" >> $GITHUB_OUTPUT
+          echo "minor=$MINOR" >> $GITHUB_OUTPUT
+
       - name: Build & push backend
         uses: docker/build-push-action@v6
         with:
@@ -35,8 +50,11 @@ jobs:
           file: ./e-commerce-backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ env.OWNER_LC }}/techmodule-e-commerce-backend:latest
             ghcr.io/${{ env.OWNER_LC }}/techmodule-e-commerce-backend:${{ github.sha }}
+            ghcr.io/${{ env.OWNER_LC }}/techmodule-e-commerce-backend:latest
+            ${{ startsWith(github.ref, 'refs/tags/v') && format('ghcr.io/{0}/techmodule-e-commerce-backend:{1}', env.OWNER_LC, steps.semver.outputs.version) || '' }}
+            ${{ startsWith(github.ref, 'refs/tags/v') && format('ghcr.io/{0}/techmodule-e-commerce-backend:{1}.{2}', env.OWNER_LC, steps.semver.outputs.major, steps.semver.outputs.minor) || '' }}
+            ${{ startsWith(github.ref, 'refs/tags/v') && format('ghcr.io/{0}/techmodule-e-commerce-backend:{1}', env.OWNER_LC, steps.semver.outputs.major) || '' }}
 
       - name: Build & push frontend
         uses: docker/build-push-action@v6
@@ -45,5 +63,8 @@ jobs:
           file: ./e-commerce-frontend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ env.OWNER_LC }}/techmodule-e-commerce-frontend:latest
             ghcr.io/${{ env.OWNER_LC }}/techmodule-e-commerce-frontend:${{ github.sha }}
+            ghcr.io/${{ env.OWNER_LC }}/techmodule-e-commerce-frontend:latest
+            ${{ startsWith(github.ref, 'refs/tags/v') && format('ghcr.io/{0}/techmodule-e-commerce-frontend:{1}', env.OWNER_LC, steps.semver.outputs.version) || '' }}
+            ${{ startsWith(github.ref, 'refs/tags/v') && format('ghcr.io/{0}/techmodule-e-commerce-frontend:{1}.{2}', env.OWNER_LC, steps.semver.outputs.major, steps.semver.outputs.minor) || '' }}
+            ${{ startsWith(github.ref, 'refs/tags/v') && format('ghcr.io/{0}/techmodule-e-commerce-frontend:{1}', env.OWNER_LC, steps.semver.outputs.major) || '' }}
